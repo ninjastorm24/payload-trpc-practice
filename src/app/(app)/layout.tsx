@@ -1,4 +1,5 @@
 import Navbar from "@/modules/navbar";
+import { TRPCReactProvider } from "@/trpc/client";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 
@@ -20,7 +21,9 @@ export default function RootLayout({
           {/* Desktop Sidebar */}
           <Navbar />
           {/* Main Content */}
-          <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+          <main className="flex-1 p-6 overflow-y-auto">
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </main>
         </div>
       </body>
     </html>

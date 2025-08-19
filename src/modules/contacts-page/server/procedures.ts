@@ -1,10 +1,8 @@
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 
 export const contactsRouter = createTRPCRouter({
-  getMany: baseProcedure.query(async () => {
-    return [
-      { id: "1", name: "John Doe" },
-      { id: "2", name: "Jane Doe" },
-    ];
+  getMany: baseProcedure.query(async ({ ctx }) => {
+    const data = await ctx.db.find({ collection: "contacts" });
+    return data;
   }),
 });

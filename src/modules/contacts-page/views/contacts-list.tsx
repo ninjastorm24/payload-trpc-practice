@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,24 +17,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 const ContactsList = () => {
-  const contacts = [
-    {
-      id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "+1 555-123",
-    },
-    {
-      id: "2",
-      name: "Jane Smith",
-      email: "jane@example.com",
-      phone: "+1 555-456",
-    },
-  ];
+  const trpc = useTRPC();
+  const { data, isLoading } = useQuery(trpc.contacts.getMany.queryOptions());
+
+  if (isLoading) {
+    return (
+      <Card className="shadow-md border rounded-xl">
+        <CardHeader>
+          <CardTitle>All Contacts</CardTitle>
+          <CardDescription>Loading contacts...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (!data?.docs?.length) {
+    return (
+      <Card className="shadow-md border rounded-xl">
+        <CardHeader>
+          <CardTitle>All Contacts</CardTitle>
+          <CardDescription>No contacts found.</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   return (
     <Card className="shadow-md border rounded-xl">
@@ -53,7 +67,7 @@ const ContactsList = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {contacts.map((c) => (
+            {data.docs.map((c) => (
               <TableRow
                 key={c.id}
                 className="hover:bg-muted/40 transition-colors"
@@ -61,24 +75,29 @@ const ContactsList = () => {
                 {/* Avatar + Name */}
                 <TableCell className="flex items-center gap-3 font-medium">
                   <Avatar>
-                    <AvatarImage src="" alt={c.name} />
+                    <AvatarImage
+                      src={false ? "/hello.png" : ""}
+                      alt={c.name ?? ""}
+                    />
                     <AvatarFallback>
-                      {c.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {c?.name
+                        ? c.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                        : "?"}
                     </AvatarFallback>
                   </Avatar>
                   <Link href={`/contacts/${c.id}`} className="hover:underline">
-                    {c.name}
+                    {c.name ?? "Unnamed"}
                   </Link>
                 </TableCell>
 
                 {/* Email */}
-                <TableCell>{c.email}</TableCell>
+                <TableCell>{c.email ?? "-"}</TableCell>
 
                 {/* Phone */}
-                <TableCell>{c.phone}</TableCell>
+                <TableCell>{c.phone ?? "-"}</TableCell>
 
                 {/* Actions */}
                 <TableCell className="text-right space-x-2">
