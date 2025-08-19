@@ -31,6 +31,7 @@ export default function HomePage() {
           </CardContent>
         </Card>
       </div>
+      {/* testing gitmoji-cli */}
     </div>
   );
 }
