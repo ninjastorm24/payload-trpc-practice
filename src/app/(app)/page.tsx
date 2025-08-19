@@ -1,6 +1,6 @@
 import HomePage from "@/modules/homepage/ui/homepage";
 
-const Page = () => {
+const Page = async () => {
   return <HomePage />;
 };
 

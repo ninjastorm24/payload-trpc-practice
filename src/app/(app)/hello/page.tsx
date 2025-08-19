@@ -1,15 +1,7 @@
-import config from "@payload-config";
-import { getPayload } from "payload";
+import { caller } from "@/trpc/server";
 
 const Page = async () => {
-  const payload = await getPayload({
-    config,
-  });
-
-  const data = await payload.find({
-    collection: "users",
-  });
-
+  const data = await caller.contacts.getMany();
   return <div>{JSON.stringify(data, null, 2)}</div>;
 };
 
