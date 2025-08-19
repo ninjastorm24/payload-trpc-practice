@@ -1,4 +1,7 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Building2, Mail, Phone, StickyNote } from "lucide-react";
 import Link from "next/link";
 
 export default function ContactDetailsPage() {
@@ -9,21 +12,78 @@ export default function ContactDetailsPage() {
     phone: "+1 555-123",
     company: "ACME Inc.",
     notes: "Met at tech conference",
+    avatar: "", // leave empty to show initials fallback
   };
 
   return (
-    <div className="space-y-6 max-w-lg">
-      <h1 className="text-2xl font-bold">{contact.name}</h1>
-      <p>Email: {contact.email}</p>
-      <p>Phone: {contact.phone}</p>
-      <p>Company: {contact.company}</p>
-      <p>Notes: {contact.notes}</p>
+    <div className="flex justify-center">
+      <Card className="w-full max-w-2xl shadow-lg border rounded-2xl">
+        {/* Header with Avatar */}
+        <CardHeader className="flex flex-col items-center space-y-3 pb-6">
+          <Avatar className="h-20 w-20">
+            <AvatarImage src={contact.avatar} alt={contact.name} />
+            <AvatarFallback className="text-lg font-semibold">
+              {contact.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </AvatarFallback>
+          </Avatar>
+          <CardTitle className="text-2xl font-bold">{contact.name}</CardTitle>
+          <div className="flex space-x-2">
+            <Button asChild>
+              <Link href={`/contacts/${contact.id}/edit`}>Edit</Link>
+            </Button>
+            <Button variant="destructive">Delete</Button>
+          </div>
+        </CardHeader>
 
-      <div className="flex space-x-2">
-        <Button asChild>
-          <Link href={`/contacts/${contact.id}/edit`}>Edit</Link>
-        </Button>
-        <Button variant="destructive">Delete</Button>
+        {/* Details Section */}
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <DetailItem
+              icon={<Mail className="h-4 w-4 text-muted-foreground" />}
+              label="Email"
+              value={contact.email}
+            />
+            <DetailItem
+              icon={<Phone className="h-4 w-4 text-muted-foreground" />}
+              label="Phone"
+              value={contact.phone}
+            />
+            <DetailItem
+              icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
+              label="Company"
+              value={contact.company}
+            />
+          </div>
+
+          <DetailItem
+            icon={<StickyNote className="h-4 w-4 text-muted-foreground" />}
+            label="Notes"
+            value={contact.notes}
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function DetailItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-start space-x-3">
+      <div className="mt-1">{icon}</div>
+      <div>
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="font-medium">{value || "—"}</p>
       </div>
     </div>
   );
